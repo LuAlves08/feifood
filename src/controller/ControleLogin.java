@@ -1,37 +1,38 @@
 package controller;
 
 import dao.AlunoDAO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import dao.Conexao;
 import javax.swing.JOptionPane;
 import view.Login;
+import view.Logado;
 
 public class ControleLogin {
+
     private final Login telaLogin;
 
     public ControleLogin(Login telaLogin) {
-        this.telaLogin = telaLogin;  // Construtor que recebe a tela de login
+        this.telaLogin = telaLogin;
     }
 
-    public void login() {
-        // Pega os dados inseridos na tela de login
-        String usuario = telaLogin.getUsuario();  // Chama o método getUsuario() para pegar o valor do campo usuário
-        String senha = telaLogin.getSenha();      // Chama o método getSenha() para pegar o valor do campo senha
+    public void entrar() {
+        String usuario = telaLogin.getUsuario();  // Pega o nome de usuário
+        String senha = telaLogin.getSenha();      // Pega a senha
 
         try {
-            AlunoDAO dao = new AlunoDAO();
-            ResultSet rs = dao.consultar(usuario, senha);  // Consulta no banco de dados
+            // Conexão com o banco de dados e autenticação do usuário
+            AlunoDAO dao = new AlunoDAO(Conexao.getConnection());
+            boolean autenticado = dao.autenticar(usuario, senha);  // Verifica no banco de dados
 
-            if (rs.next()) {
+            if (autenticado) {
                 JOptionPane.showMessageDialog(telaLogin, "Login bem-sucedido!");
-                // Caso o login seja bem-sucedido, abre uma nova tela ou continua com o fluxo
-                // Exemplo: new TelaLogada().setVisible(true);
-                // telaLogin.dispose();  // Fecha a tela de login
+                Logado telaLogado = new Logado();  // Cria a tela "Logado"
+                telaLogado.setVisible(true);       // Exibe a tela "Logado"
+                telaLogin.dispose();               // Fecha a tela de login
             } else {
                 JOptionPane.showMessageDialog(telaLogin, "Usuário ou senha inválidos!");
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(telaLogin, "Erro no login: " + e.getMessage());
+        } catch (java.sql.SQLException ex) {
+            System.getLogger(ControleLogin.class.getName()).log(System.Logger.Level.ERROR, "Erro de autenticação", ex);
         }
     }
 }
