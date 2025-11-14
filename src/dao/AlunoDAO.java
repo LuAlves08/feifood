@@ -37,7 +37,7 @@ public class AlunoDAO {
         }
     }
 
-    /** BUSCAR ALUNO POR USUARIO */
+    /** BUSCAR DADOS DO ALUNO PELO USUÁRIO */
     public Aluno buscarPorUsuario(String usuario) throws SQLException {
         final String sql = "SELECT nome, usuario, senha FROM alunos WHERE usuario = ? LIMIT 1";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -55,22 +55,22 @@ public class AlunoDAO {
         }
     }
 
-    /** EXCLUIR ALUNO */
+    /** EXCLUIR CONTA PELO USUÁRIO */
     public int excluirPorUsuario(String usuario) throws SQLException {
         final String sql = "DELETE FROM alunos WHERE usuario = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, usuario);
-            return ps.executeUpdate();
+            return ps.executeUpdate(); // 1 se excluiu, 0 se não achou
         }
     }
 
-    /** ALTERAR SENHA */
+    /** ALTERAR SENHA DO USUÁRIO */
     public int alterarSenha(String usuario, String novaSenha) throws SQLException {
         final String sql = "UPDATE alunos SET senha = ? WHERE usuario = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, novaSenha);
             ps.setString(2, usuario);
-            return ps.executeUpdate();
+            return ps.executeUpdate(); // 1 se atualizou
         }
     }
 }

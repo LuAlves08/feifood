@@ -6,8 +6,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import model.Aluno;
-import view.Login;
 import view.Logado;
+import view.Login;
 
 public class ControleLogado {
 
@@ -21,17 +21,18 @@ public class ControleLogado {
         Aluno a = tela.getAluno();
 
         int opc = JOptionPane.showConfirmDialog(
-            tela,
-            "Deseja realmente excluir sua conta (" + a.getUsuario() + ")?",
-            "Confirmação",
-            JOptionPane.YES_NO_OPTION
+                tela,
+                "Deseja realmente excluir sua conta (" + a.getUsuario() + ")?",
+                "Confirmação",
+                JOptionPane.YES_NO_OPTION
         );
 
-        if (opc != JOptionPane.YES_OPTION) return;
+        if (opc != JOptionPane.YES_OPTION) {
+            return;
+        }
 
         try (Connection c = Conexao.getConnection()) {
             AlunoDAO dao = new AlunoDAO(c);
-
             int linhas = dao.excluirPorUsuario(a.getUsuario());
 
             if (linhas > 0) {
@@ -39,7 +40,7 @@ public class ControleLogado {
                 new Login().setVisible(true);
                 tela.dispose();
             } else {
-                JOptionPane.showMessageDialog(tela, "Erro: usuário não encontrado.");
+                JOptionPane.showMessageDialog(tela, "Usuário não encontrado para exclusão.");
             }
 
         } catch (SQLException e) {

@@ -11,15 +11,23 @@ public class Alteracao extends javax.swing.JFrame {
     public Alteracao(Aluno aluno) {
         initComponents();
         this.aluno = aluno;
+        this.controle = new ControleAlteracao(this, aluno);
 
-        // Exibe o nome do aluno no topo
+        // mostra o nome do aluno no label de topo
         jLabel1.setText(aluno.getNome());
 
-        // Inicializa o controlador
-        controle = new ControleAlteracao(this, aluno);
+        // BOTÃO VOLTAR → volta pra tela Logado
+        jButton1.addActionListener(e -> {
+            new Logado(aluno).setVisible(true);
+            this.dispose();
+        });
+
+        // BOTÃO ALTERAR → chama o controlador
+        // (também chamamos dentro do método jButton2ActionPerformed)
+        jButton2.addActionListener(e -> controle.alterar());
     }
 
-    // Retorna nova senha digitada
+    // pega a nova senha digitada no campo
     public String getNovaSenha() {
         return jTextField1.getText();
     }
@@ -27,7 +35,6 @@ public class Alteracao extends javax.swing.JFrame {
     public Aluno getAluno() {
         return aluno;
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -100,12 +107,9 @@ public class Alteracao extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-   controle.alterar();
+
     }//GEN-LAST:event_jButton2ActionPerformed
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        this.dispose();                  // fecha esta tela
-        new Logado(aluno).setVisible(true); // volta para a tela Logado
-    }                                        
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

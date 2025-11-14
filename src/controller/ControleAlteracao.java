@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import model.Aluno;
 import view.Alteracao;
+import view.Logado;
 
 public class ControleAlteracao {
 
@@ -28,19 +29,20 @@ public class ControleAlteracao {
 
         try (Connection c = Conexao.getConnection()) {
             AlunoDAO dao = new AlunoDAO(c);
-
             int linhas = dao.alterarSenha(aluno.getUsuario(), novaSenha);
 
             if (linhas > 0) {
                 aluno.setSenha(novaSenha);
                 JOptionPane.showMessageDialog(tela, "Senha alterada com sucesso!");
+
+                // Volta para a tela Logado
+                new Logado(aluno).setVisible(true);
                 tela.dispose();
             } else {
-                JOptionPane.showMessageDialog(tela, "Erro ao alterar senha.");
+                JOptionPane.showMessageDialog(tela, "Usuário não encontrado para alterar senha.");
             }
-
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(tela, "Erro: " + e.getMessage());
+            JOptionPane.showMessageDialog(tela, "Erro ao alterar: " + e.getMessage());
         }
     }
 }
