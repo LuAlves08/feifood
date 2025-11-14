@@ -1,5 +1,6 @@
 package view;
 
+import dao.PizzariaDAO;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -9,39 +10,36 @@ public class CadastroPedido extends javax.swing.JFrame {
 
     private final Aluno aluno;
 
-    // Banco de pizzas
+    // pizzas fixas
     private final Map<String, String> pizzas = new HashMap<>();
+
+    // DAO
+    private final PizzariaDAO pizzariaDAO = new PizzariaDAO();
 
     public CadastroPedido(Aluno aluno) {
         initComponents();
         this.aluno = aluno;
         setLocationRelativeTo(null);
 
-        cadastrarPizzas();
+        cadastrarPizzasFixas();
         configurarEventos();
     }
 
-    // ================================================
     private void configurarEventos() {
 
-        // ADICIONAR
         jButton1.addActionListener(e -> adicionarPizza());
-
-        // REMOVER ÚLTIMO
         jButton2.addActionListener(e -> removerUltimoItem());
-
-        // SALVAR
         jButton3.addActionListener(e -> salvarPedido());
 
-        // VOLTAR
-        jButton4.addActionListener(e -> {
+        jButton4.addActionListener(e -> { // VOLTAR
             new Logado(aluno).setVisible(true);
             this.dispose();
         });
+
+        jRadioButton1.addActionListener(e -> abrirPersonalizar());
     }
 
-    // ================================================
-    private void cadastrarPizzas() {
+    private void cadastrarPizzasFixas() {
         pizzas.put("calabresa", "Calabresa");
         pizzas.put("portuguesa", "Portuguesa");
         pizzas.put("marguerita", "Marguerita");
@@ -49,7 +47,13 @@ public class CadastroPedido extends javax.swing.JFrame {
         pizzas.put("4 queijos", "Quatro Queijos");
     }
 
-    // ================================================
+    // ABRIR PIZZA PERSONALIZADA
+    private void abrirPersonalizar() {
+        PersonalizarPedido tela = new PersonalizarPedido(this);
+        tela.setVisible(true);
+        this.setVisible(false);
+    }
+
     private void adicionarPizza() {
 
         String sabor = jTextField1.getText().trim().toLowerCase();
@@ -63,52 +67,69 @@ public class CadastroPedido extends javax.swing.JFrame {
             return;
         }
 
-        // Verifica se existe
-        if (!pizzas.containsKey(sabor)) {
+        // tenta personalizada primeiro
+        String personalizada = pizzariaDAO.buscarPizza(sabor);
 
-            StringBuilder lista = new StringBuilder("Sabor não encontrado!\n\nSabores existentes:\n\n");
+        if (personalizada != null) {
+            jTextArea1.append(
+                "• Ingredientes: " + personalizada + "\n" +
+                "  Quantidade: " + qtd + "\n\n"
+            );
 
-            for (String p : pizzas.keySet()) {
-                lista.append("- ")
-                        .append(p.substring(0, 1).toUpperCase())
-                        .append(p.substring(1))
-                        .append("\n");
-            }
-
-            JOptionPane.showMessageDialog(this,
-                    lista.toString(),
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
-
+            jTextField1.setText("");
+            jTextField2.setText("");
             return;
         }
 
-        // Adiciona item
-        jTextArea1.append("Pizza: " + pizzas.get(sabor) + " | Quantidade: " + qtd + "\n");
+        // não existe
+        if (!pizzas.containsKey(sabor)) {
+            JOptionPane.showMessageDialog(this,
+                    "Sabor não encontrado!",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        jTextArea1.append(
+            "• " + pizzas.get(sabor) + "\n" +
+            "  Quantidade: " + qtd + "\n\n"
+        );
 
         jTextField1.setText("");
         jTextField2.setText("");
     }
 
-    // ================================================
+    // usado pela tela de personalização
+    public void adicionarPizzaPersonalizada(String nome, String ingredientes) {
+
+        jTextArea1.append(
+            "• Ingredientes: " + ingredientes + "\n" +
+            "  Quantidade: 1\n\n"
+        );
+    }
+
     private void removerUltimoItem() {
 
-        String texto = jTextArea1.getText();
+        String texto = jTextArea1.getText().trim();
+
         if (texto.isEmpty()) return;
 
         String[] linhas = texto.split("\n");
-        if (linhas.length == 0) return;
+
+        if (linhas.length <= 1) {
+            jTextArea1.setText("");
+            return;
+        }
 
         StringBuilder novo = new StringBuilder();
 
-        for (int i = 0; i < linhas.length - 1; i++) {
+        for (int i = 0; i < linhas.length - 2; i++) {
             novo.append(linhas[i]).append("\n");
         }
 
         jTextArea1.setText(novo.toString());
     }
 
-    // ================================================
     private void salvarPedido() {
 
         if (jTextArea1.getText().isEmpty()) {
@@ -119,24 +140,44 @@ public class CadastroPedido extends javax.swing.JFrame {
             return;
         }
 
-        // Abre modal de avaliação
-        AvaliacaoPedido av = new AvaliacaoPedido(this);
-        av.setVisible(true);
+        // AVALIAÇÃO DO PEDIDO
+        Integer nota = escolherNota();
 
-        int nota = av.getNota();
-
-        if (nota == 0) {
+        if (nota == null) {
             JOptionPane.showMessageDialog(this,
-                    "Você precisa avaliar antes de salvar.",
-                    "Aviso",
+                    "Avaliação cancelada.",
+                    "Cancelado",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         JOptionPane.showMessageDialog(this,
-                "Pedido salvo com sucesso!\nAvaliação: " + nota + " ●",
+                "Pedido salvo com sucesso!\nAvaliação: " + nota + " estrelas.",
                 "Sucesso",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // POP-UP DE ESTRELAS
+    private Integer escolherNota() {
+        String[] opcoes = { "1", "2", "3", "4", "5" };
+
+        String resposta = (String) JOptionPane.showInputDialog(
+                this,
+                "Avalie o pedido:",
+                "Avaliação",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                "5"
+        );
+
+        if (resposta == null) return null;
+
+        return Integer.parseInt(resposta);
+    }
+
+    public Aluno getAluno() {
+        return aluno;
     }
 
 

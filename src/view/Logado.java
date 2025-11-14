@@ -1,54 +1,65 @@
 package view;
 
 import controller.ControleLogado;
-import javax.swing.JOptionPane;
 import model.Aluno;
 
 public class Logado extends javax.swing.JFrame {
 
     private final Aluno aluno;
-    private ControleLogado controle;
+    private final ControleLogado controle;
 
     public Logado(Aluno aluno) {
         initComponents();
         this.aluno = aluno;
         this.controle = new ControleLogado(this);
 
-        jLabel1.setText(aluno.getNome()); // Mostra o nome do usuário
+        setLocationRelativeTo(null);
 
-        // BOTÃO BUSCAR POR ALIMENTO
+        // mostra o nome do usuário
+        jLabel1.setText(aluno.getNome());
+
+        configurarEventos();
+    }
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //  MÉTODOS DE APOIO
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // usado pelo ControleLogado (resolve o erro do getAluno)
+    public Aluno getAluno() {
+        return aluno;
+    }
+
+    // aqui ligamos os botões às telas
+    private void configurarEventos() {
+
+        // BOTÃO BUSCAR POR PIZZA
         jButton3.addActionListener(e -> {
             new BuscarAlimento(aluno).setVisible(true);
-            this.dispose();
+            dispose();
         });
 
         // BOTÃO ALTERAR SENHA
         jButton1.addActionListener(e -> {
             new Alteracao(aluno).setVisible(true);
-            this.dispose();
+            dispose();
         });
+
+        // BOTÃO EXCLUIR CADASTRO (continua com o controller)
+        jButton2.addActionListener(e -> controle.excluirConta());
 
         // BOTÃO CADASTRAR PEDIDO
         jButton5.addActionListener(e -> {
             new CadastroPedido(aluno).setVisible(true);
-            this.dispose();
+            dispose();
         });
 
-        // BOTÃO EXCLUIR CADASTRO
-        jButton2.addActionListener(e -> controle.excluirConta());
-
-        // SAIR → volta para Login
+        // BOTÃO SAIR → volta para Login
         jButton7.addActionListener(e -> {
             new Login().setVisible(true);
-            this.dispose();
+            dispose();
         });
     }
-
-    public Aluno getAluno() {
-        return aluno;
-    }
-
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

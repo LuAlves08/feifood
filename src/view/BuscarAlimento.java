@@ -1,65 +1,90 @@
 package view;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import javax.swing.JOptionPane;
 import model.Aluno;
+import dao.PizzariaDAO;
 
 public class BuscarAlimento extends javax.swing.JFrame {
 
+    private final Map<String, String> pizzasPadrao;
     private final Aluno aluno;
-
-    // Banco de pizzas
-    private final Map<String, String> pizzas = new HashMap<>();
 
     public BuscarAlimento(Aluno aluno) {
         initComponents();
-        this.aluno = aluno;
         setLocationRelativeTo(null);
 
-        cadastrarPizzas();
+        this.aluno = aluno;
 
-        // BOTÃO BUSCAR → usa jButton2 (seu botão)
-        jButton2.addActionListener(e -> buscarPizza());
+        pizzasPadrao = Map.of(
+            "calabresa", "Calabresa",
+            "frango", "Frango com catupiry",
+            "portuguesa", "Portuguesa",
+            "4 queijos", "Quatro queijos"
+        );
 
-        // BOTÃO VOLTAR → usa jButton1 (seu botão)
-        jButton1.addActionListener(e -> {
-            new Logado(aluno).setVisible(true);
-            this.dispose();
-        });
+        jButton2.addActionListener(e -> buscar());  // BUSCAR
+        jButton1.addActionListener(e -> voltar());  // VOLTAR
     }
 
-    // Cadastro das pizzas
-    private void cadastrarPizzas() {
-        pizzas.put("calabresa", "Calabresa\n- Calabresa\n- Cebola\n- Queijo");
-        pizzas.put("portuguesa", "Portuguesa\n- Presunto\n- Ovo\n- Ervilha\n- Queijo");
-        pizzas.put("marguerita", "Marguerita\n- Tomate\n- Manjericão\n- Queijo");
-        pizzas.put("frango", "Frango com Catupiry\n- Frango desfiado\n- Catupiry\n- Queijo");
-        pizzas.put("4 queijos", "Quatro Queijos\n- Mussarela\n- Provolone\n- Parmesão\n- Gorgonzola");
+    private void voltar() {
+        new Logado(aluno).setVisible(true);
+        this.dispose();
     }
 
-    // Função de busca
-    private void buscarPizza() {
-        String nome = jTextField1.getText().trim().toLowerCase();
+    private void buscar() {
 
-        if (nome.isEmpty()) {
-            jTextArea1.setText("Digite o nome da pizza.");
+        String pesquisa = jTextField1.getText().trim().toLowerCase();
+
+        if (pesquisa.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Digite algo para pesquisar.",
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (pizzas.containsKey(nome)) {
-            jTextArea1.setText(pizzas.get(nome));
-        } else {
-            StringBuilder lista = new StringBuilder("Sabor não encontrado.\n\nPizzas disponíveis:\n\n");
+        StringBuilder resultado = new StringBuilder();
+        boolean achou = false;
 
-            for (String p : pizzas.keySet()) {
-                lista.append("- ")
-                     .append(p.substring(0, 1).toUpperCase())
-                     .append(p.substring(1))
-                     .append("\n");
+        // PIZZAS PADRÃO (aqui o "nome" já funciona como ingrediente)
+        for (String chave : pizzasPadrao.keySet()) {
+            String nome = pizzasPadrao.get(chave);
+
+            if (chave.contains(pesquisa) || nome.toLowerCase().contains(pesquisa)) {
+                if (resultado.length() > 0) {
+                    resultado.append("\n");
+                }
+                resultado.append(nome);
+                achou = true;
             }
-
-            jTextArea1.setText(lista.toString());
         }
+
+        // PIZZAS PERSONALIZADAS (nome – ingredientes)
+        List<String> personalizadas = PizzariaDAO.listarPersonalizadas();
+
+        for (String linha : personalizadas) {
+            String[] partes = linha.split("–");
+
+            if (partes.length == 2) {
+                String nome = partes[0].trim().toLowerCase();
+                String ingredientes = partes[1].trim();
+
+                if (nome.contains(pesquisa)) {
+                    if (resultado.length() > 0) {
+                        resultado.append("\n");
+                    }
+                    resultado.append(ingredientes);
+                    achou = true;
+                }
+            }
+        }
+
+        if (!achou) {
+            resultado.append("Nenhum ingrediente encontrado.");
+        }
+
+        jTextArea1.setText(resultado.toString());
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
