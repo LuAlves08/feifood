@@ -14,10 +14,9 @@ public class Logado extends javax.swing.JFrame {
         this.aluno = aluno;
         this.controle = new ControleLogado(this);
 
-        // Mostra o nome do usuário no topo
-        jLabel1.setText(aluno.getNome());
+        jLabel1.setText(aluno.getNome()); // Mostra o nome do usuário
 
-        // BOTÃO BUSCAR POR ALIMENTO → abre a tela BuscarAlimento
+        // BOTÃO BUSCAR POR ALIMENTO
         jButton3.addActionListener(e -> {
             new BuscarAlimento(aluno).setVisible(true);
             this.dispose();
@@ -29,22 +28,26 @@ public class Logado extends javax.swing.JFrame {
             this.dispose();
         });
 
-        // BOTÃO CADASTRAR PEDIDO (ainda não implementado de verdade)
+        // BOTÃO CADASTRAR PEDIDO
         jButton5.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this,
-                    "Funcionalidade de cadastrar pedido ainda não foi implementada.");
+            new CadastroPedido(aluno).setVisible(true);
+            this.dispose();
         });
 
         // BOTÃO EXCLUIR CADASTRO
         jButton2.addActionListener(e -> controle.excluirConta());
 
-        // BOTÃO SAIR → volta para LOGIN
-        // (deixa o listener gerado pelo NetBeans chamar jButton7ActionPerformed)
+        // SAIR → volta para Login
+        jButton7.addActionListener(e -> {
+            new Login().setVisible(true);
+            this.dispose();
+        });
     }
 
     public Aluno getAluno() {
         return aluno;
     }
+
 
 
     @SuppressWarnings("unchecked")
@@ -136,7 +139,7 @@ public class Logado extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        setLocationRelativeTo(null);
+        
     }//GEN-LAST:event_jButton7ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
