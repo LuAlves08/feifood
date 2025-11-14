@@ -17,13 +17,10 @@ public class Logado extends javax.swing.JFrame {
         // Mostra o nome do usuário no topo
         jLabel1.setText(aluno.getNome());
 
-        // BOTÃO BUSCAR POR ALIMENTO (placeholder por enquanto)
+        // BOTÃO BUSCAR POR ALIMENTO → abre a tela BuscarAlimento
         jButton3.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this,
-                    "Funcionalidade de busca por alimento será implementada depois.");
-            // Quando tiver a tela:
-            // new BuscaAlimento(aluno).setVisible(true);
-            // this.dispose();
+            new BuscarAlimento(aluno).setVisible(true);
+            this.dispose();
         });
 
         // BOTÃO ALTERAR SENHA
@@ -32,7 +29,7 @@ public class Logado extends javax.swing.JFrame {
             this.dispose();
         });
 
-        // BOTÃO CADASTRAR PEDIDO (placeholder)
+        // BOTÃO CADASTRAR PEDIDO (ainda não implementado de verdade)
         jButton5.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
                     "Funcionalidade de cadastrar pedido ainda não foi implementada.");
@@ -42,15 +39,13 @@ public class Logado extends javax.swing.JFrame {
         jButton2.addActionListener(e -> controle.excluirConta());
 
         // BOTÃO SAIR → volta para LOGIN
-        jButton7.addActionListener(e -> {
-            new Login().setVisible(true);
-            this.dispose();
-        });
+        // (deixa o listener gerado pelo NetBeans chamar jButton7ActionPerformed)
     }
 
     public Aluno getAluno() {
         return aluno;
     }
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -78,7 +73,7 @@ public class Logado extends javax.swing.JFrame {
         jButton2.setText("EXCLUIR CADASTRO");
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setText("BUSCAR POR ALIMENTO");
+        jButton3.setText("BUSCAR POR PIZZA");
 
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton5.setText("CADASTRAR PEDIDO");
@@ -95,32 +90,27 @@ public class Logado extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addGap(22, 22, 22))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
+                        .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(17, 17, 17))
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
+                        .addGap(23, 23, 23))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(148, 148, 148))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(164, 164, 164)
-                .addComponent(jButton7)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jLabel2)
+                        .addGap(148, 148, 148))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(157, 157, 157))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton7)
+                        .addGap(164, 164, 164))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
