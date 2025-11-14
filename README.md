@@ -1,4 +1,4 @@
-Relatório do Projeto FEI Food 
+Relatório do Projeto FEI Food
 
 1. Introdução 
 
@@ -108,7 +108,7 @@ A aplicação se conecta ao banco através de JDBC usando a classe Conexao.java.
 
 4. Funcionalidades Implementadas 
 
-✔ 4.1 Tela de Login 
+4.1 Tela de Login 
 
 Permite que o usuário insira seu usuário e senha. 
 Caso as credenciais estejam corretas, o sistema abre a tela principal (Logado). 
