@@ -85,7 +85,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Digite o nome da pizza:"/>
+        <Property name="text" type="java.lang.String" value="Digite o sabor da pizza:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField1">

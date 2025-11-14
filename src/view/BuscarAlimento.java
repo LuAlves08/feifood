@@ -1,34 +1,66 @@
 package view;
 
+import java.util.HashMap;
+import java.util.Map;
 import model.Aluno;
 
 public class BuscarAlimento extends javax.swing.JFrame {
 
     private final Aluno aluno;
 
+    // Banco de pizzas
+    private final Map<String, String> pizzas = new HashMap<>();
+
     public BuscarAlimento(Aluno aluno) {
         initComponents();
         this.aluno = aluno;
-
-        // Centraliza a janela
         setLocationRelativeTo(null);
 
-        // BOTÃO BUSCAR (por enquanto só mostra o que foi digitado)
-        jButton2.addActionListener(e -> {
-            String nomePizza = jTextField1.getText();
-            jTextArea1.setText(
-                "A busca ainda será implementada.\n" +
-                "Você digitou: " + nomePizza
-            );
-        });
+        cadastrarPizzas();
 
-        // BOTÃO VOLTAR → volta para Logado
+        // BOTÃO BUSCAR → usa jButton2 (seu botão)
+        jButton2.addActionListener(e -> buscarPizza());
+
+        // BOTÃO VOLTAR → usa jButton1 (seu botão)
         jButton1.addActionListener(e -> {
             new Logado(aluno).setVisible(true);
             this.dispose();
         });
     }
 
+    // Cadastro das pizzas
+    private void cadastrarPizzas() {
+        pizzas.put("calabresa", "Calabresa\n- Calabresa\n- Cebola\n- Queijo");
+        pizzas.put("portuguesa", "Portuguesa\n- Presunto\n- Ovo\n- Ervilha\n- Queijo");
+        pizzas.put("marguerita", "Marguerita\n- Tomate\n- Manjericão\n- Queijo");
+        pizzas.put("frango", "Frango com Catupiry\n- Frango desfiado\n- Catupiry\n- Queijo");
+        pizzas.put("4 queijos", "Quatro Queijos\n- Mussarela\n- Provolone\n- Parmesão\n- Gorgonzola");
+    }
+
+    // Função de busca
+    private void buscarPizza() {
+        String nome = jTextField1.getText().trim().toLowerCase();
+
+        if (nome.isEmpty()) {
+            jTextArea1.setText("Digite o nome da pizza.");
+            return;
+        }
+
+        if (pizzas.containsKey(nome)) {
+            jTextArea1.setText(pizzas.get(nome));
+        } else {
+            StringBuilder lista = new StringBuilder("Sabor não encontrado.\n\nPizzas disponíveis:\n\n");
+
+            for (String p : pizzas.keySet()) {
+                lista.append("- ")
+                     .append(p.substring(0, 1).toUpperCase())
+                     .append(p.substring(1))
+                     .append("\n");
+            }
+
+            jTextArea1.setText(lista.toString());
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -46,7 +78,7 @@ public class BuscarAlimento extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setText("VOLTAR");
 
-        jLabel1.setText("Digite o nome da pizza:");
+        jLabel1.setText("Digite o sabor da pizza:");
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

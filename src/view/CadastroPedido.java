@@ -1,5 +1,7 @@
 package view;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import model.Aluno;
 
@@ -7,73 +9,116 @@ public class CadastroPedido extends javax.swing.JFrame {
 
     private final Aluno aluno;
 
+    // BANCO DE SABORES
+    private final Map<String, String> pizzas = new HashMap<>();
+
     public CadastroPedido(Aluno aluno) {
         initComponents();
         this.aluno = aluno;
-        setLocationRelativeTo(null); // centraliza a janela
+        setLocationRelativeTo(null);
 
-        // BOTÃO ADICIONAR PEDIDO
-        jButton1.addActionListener(e -> {
-            String pizza = jTextField1.getText().trim();
-            String qtd = jTextField2.getText().trim();
+        cadastrarPizzas(); // carrega os sabores cadastrados
 
-            if (pizza.isEmpty() || qtd.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Preencha o nome da pizza e a quantidade.",
-                        "Atenção",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                return;
-            }
+        // BOTÃO ADICIONAR (jButton1)
+        jButton1.addActionListener(e -> adicionarPizza());
 
-            jTextArea1.append("Pizza: " + pizza + " | Quantidade: " + qtd + "\n");
+        // BOTÃO REMOVER (jButton2)
+        jButton2.addActionListener(e -> removerUltimoItem());
 
-            jTextField1.setText("");
-            jTextField2.setText("");
-        });
+        // BOTÃO SALVAR (jButton3)
+        jButton3.addActionListener(e -> salvarPedido());
 
-        // BOTÃO REMOVER ÚLTIMO ITEM
-        jButton2.addActionListener(e -> {
-            String texto = jTextArea1.getText();
-            if (texto.isEmpty()) return;
-
-            String[] linhas = texto.split("\n");
-
-            if (linhas.length == 0) return;
-
-            StringBuilder novoTexto = new StringBuilder();
-            for (int i = 0; i < linhas.length - 1; i++) {
-                novoTexto.append(linhas[i]).append("\n");
-            }
-
-            jTextArea1.setText(novoTexto.toString());
-        });
-
-        // BOTÃO SALVAR
-        jButton3.addActionListener(e -> {
-            if (jTextArea1.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Nenhum item no pedido para salvar.",
-                        "Aviso",
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Pedido salvo com sucesso! (Simulação)",
-                        "Sucesso",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-        });
-
-        // BOTÃO VOLTAR — FUNCIONANDO
+        // BOTÃO VOLTAR (jButton4)
         jButton4.addActionListener(e -> {
             new Logado(aluno).setVisible(true);
             this.dispose();
         });
+    }
+
+    // ======== CADASTRO DOS SABORES ============
+    private void cadastrarPizzas() {
+        pizzas.put("calabresa", "Calabresa");
+        pizzas.put("portuguesa", "Portuguesa");
+        pizzas.put("marguerita", "Marguerita");
+        pizzas.put("frango", "Frango com Catupiry");
+        pizzas.put("4 queijos", "Quatro Queijos");
+    }
+
+    // ======== ADICIONAR ITEM ============
+    private void adicionarPizza() {
+        String sabor = jTextField1.getText().trim().toLowerCase();
+        String qtd   = jTextField2.getText().trim();
+
+        if (sabor.isEmpty() || qtd.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Preencha o sabor e a quantidade.",
+                    "Atenção",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // valida sabor
+        if (!pizzas.containsKey(sabor)) {
+            StringBuilder lista = new StringBuilder("Sabor não encontrado!\n\nSabores existentes:\n\n");
+
+            for (String p : pizzas.keySet()) {
+                lista.append("- ")
+                     .append(p.substring(0, 1).toUpperCase())
+                     .append(p.substring(1))
+                     .append("\n");
+            }
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    lista.toString(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        // Se chegou aqui, o sabor existe
+        jTextArea1.append("Pizza: " + sabor + " | Quantidade: " + qtd + "\n");
+
+        jTextField1.setText("");
+        jTextField2.setText("");
+    }
+
+    // ======== REMOVER ÚLTIMO ITEM ============
+    private void removerUltimoItem() {
+        String texto = jTextArea1.getText();
+        if (texto.isEmpty()) return;
+
+        String[] linhas = texto.split("\n");
+        if (linhas.length == 0) return;
+
+        StringBuilder novoTexto = new StringBuilder();
+        for (int i = 0; i < linhas.length - 1; i++) {
+            novoTexto.append(linhas[i]).append("\n");
+        }
+
+        jTextArea1.setText(novoTexto.toString());
+    }
+
+    // ======== SALVAR (simulação) ============
+    private void salvarPedido() {
+        if (jTextArea1.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Nenhum item no pedido.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pedido salvo com sucesso!",
+                    "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
 
     @SuppressWarnings("unchecked")
