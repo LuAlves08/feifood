@@ -2,9 +2,12 @@ package controller;
 
 import dao.AlunoDAO;
 import dao.Conexao;
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import view.Login;
 import view.Logado;
+import model.Aluno;
 
 public class ControleLogin {
 
@@ -15,24 +18,22 @@ public class ControleLogin {
     }
 
     public void entrar() {
-        String usuario = telaLogin.getUsuario();  // Pega o nome de usuário
-        String senha = telaLogin.getSenha();      // Pega a senha
+        String usuario = telaLogin.getUsuario();
+        String senha   = telaLogin.getSenha();
 
-        try {
-            // Conexão com o banco de dados e autenticação do usuário
-            AlunoDAO dao = new AlunoDAO(Conexao.getConnection());
-            boolean autenticado = dao.autenticar(usuario, senha);  // Verifica no banco de dados
+        try (Connection c = Conexao.getConnection()) {
+            AlunoDAO dao = new AlunoDAO(c);
 
-            if (autenticado) {
-                JOptionPane.showMessageDialog(telaLogin, "Login bem-sucedido!");
-                Logado telaLogado = new Logado();  // Cria a tela "Logado"
-                telaLogado.setVisible(true);       // Exibe a tela "Logado"
-                telaLogin.dispose();               // Fecha a tela de login
+            if (dao.autenticar(usuario, senha)) {
+                Aluno a = dao.buscarPorUsuario(usuario);
+                Logado tela = new Logado(a);
+                tela.setVisible(true);
+                telaLogin.dispose();
             } else {
                 JOptionPane.showMessageDialog(telaLogin, "Usuário ou senha inválidos!");
             }
-        } catch (java.sql.SQLException ex) {
-            System.getLogger(ControleLogin.class.getName()).log(System.Logger.Level.ERROR, "Erro de autenticação", ex);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(telaLogin, "Erro de conexão: " + e.getMessage());
         }
     }
 }

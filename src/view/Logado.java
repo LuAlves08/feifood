@@ -1,26 +1,35 @@
 package view;
 
-import javax.swing.*;
-import java.util.logging.Logger;  // Importando o Logger
+import controller.ControleLogado;
+import model.Aluno;
 
 public class Logado extends javax.swing.JFrame {
 
-    private static final Logger logger = Logger.getLogger(Logado.class.getName());  // Inicializando o logger
+    private final Aluno aluno;          // aluno logado
+    private ControleLogado controle;    // controlador desta tela
 
-    public Logado() {
+    public Logado(Aluno aluno) {
         initComponents();
+        this.aluno = aluno;
+
+        // mostra o nome do aluno no label
+        jLabel1.setText(aluno.getNome());
+
+        // inicializa o controlador
+        controle = new ControleLogado(this);
+
+        // botão ALTERAR SENHA -> vai para tela Alteracao
+        jButton1.addActionListener(e -> {
+            new Alteracao(this.aluno).setVisible(true);
+            this.dispose(); // fecha a tela Logado
+        });
+
+        // botão EXCLUIR CADASTRO -> chama o controller
+        jButton2.addActionListener(e -> controle.excluirConta());
     }
 
-    // Lógica para o botão "Alterar Senha"
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Funcionalidade de Alterar Senha");
-        // Aqui, você pode adicionar o código para permitir a alteração de senha
-    }
-
-    // Lógica para o botão "Excluir Cadastro"
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Funcionalidade de Excluir Cadastro");
-        // Aqui, você pode adicionar o código para excluir o cadastro do usuário
+    public Aluno getAluno() {
+        return aluno;
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -80,25 +89,6 @@ public class Logado extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            // Registra o erro no console
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Logado().setVisible(true));
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

@@ -1,11 +1,11 @@
 package model;
 
 public class Aluno {
-    
+
     private String nome;
     private String usuario;
     private String senha;
-    
+
     public Aluno(String nome, String usuario, String senha) {
         this.nome = nome;
         this.usuario = usuario;

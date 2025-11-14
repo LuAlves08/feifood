@@ -10,33 +10,67 @@ public class AlunoDAO {
 
     private final Connection conn;
 
-    // Construtor da classe que recebe a conexão com o banco de dados
     public AlunoDAO(Connection conn) {
         this.conn = conn;
     }
 
-    // Método para inserir um aluno no banco de dados
+    /** INSERIR CADASTRO */
     public void inserir(Aluno aluno) throws SQLException {
-        String sql = "INSERT INTO alunos (nome, usuario, senha) VALUES (?, ?, ?)";  // Query para inserir no banco
-
+        final String sql = "INSERT INTO alunos (nome, usuario, senha) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, aluno.getNome());  // Define o nome na consulta
-            ps.setString(2, aluno.getUsuario()); // Define o usuário na consulta
-            ps.setString(3, aluno.getSenha());   // Define a senha na consulta
-            ps.executeUpdate();  // Executa a inserção no banco
+            ps.setString(1, aluno.getNome());
+            ps.setString(2, aluno.getUsuario());
+            ps.setString(3, aluno.getSenha());
+            ps.executeUpdate();
         }
     }
 
-    // Método para autenticar o login
-public boolean autenticar(String usuario, String senha) throws SQLException {
-    String sql = "SELECT 1 FROM alunos WHERE usuario = ? AND senha = ? LIMIT 1";  // Query SQL para verificar o login
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, usuario);  // Define o nome de usuário
-        ps.setString(2, senha);     // Define a senha
-        try (ResultSet rs = ps.executeQuery()) {
-            return rs.next();  // Se encontrar o usuário e senha, retorna true
+    /** AUTENTICAR LOGIN */
+    public boolean autenticar(String usuario, String senha) throws SQLException {
+        final String sql = "SELECT 1 FROM alunos WHERE usuario = ? AND senha = ? LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            ps.setString(2, senha);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
-}
 
+    /** BUSCAR ALUNO POR USUARIO */
+    public Aluno buscarPorUsuario(String usuario) throws SQLException {
+        final String sql = "SELECT nome, usuario, senha FROM alunos WHERE usuario = ? LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Aluno(
+                        rs.getString("nome"),
+                        rs.getString("usuario"),
+                        rs.getString("senha")
+                    );
+                }
+                return null;
+            }
+        }
+    }
+
+    /** EXCLUIR ALUNO */
+    public int excluirPorUsuario(String usuario) throws SQLException {
+        final String sql = "DELETE FROM alunos WHERE usuario = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            return ps.executeUpdate();
+        }
+    }
+
+    /** ALTERAR SENHA */
+    public int alterarSenha(String usuario, String novaSenha) throws SQLException {
+        final String sql = "UPDATE alunos SET senha = ? WHERE usuario = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, novaSenha);
+            ps.setString(2, usuario);
+            return ps.executeUpdate();
+        }
+    }
 }
